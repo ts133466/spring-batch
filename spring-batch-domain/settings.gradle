@@ -1,0 +1,3 @@
+include ':spring-batch-persistence'
+
+project(':spring-batch-persistence').projectDir = new File('../spring-batch-persistence')

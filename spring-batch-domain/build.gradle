@@ -1,0 +1,6 @@
+apply from : '../parent.gradle'
+
+dependencies {
+	compile "org.springframework.security:spring-security-core:4.2.3.RELEASE"
+    compile project(':spring-batch-persistence')
+}

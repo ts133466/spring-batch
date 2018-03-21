@@ -1,0 +1,27 @@
+apply from : '../parent.gradle'
+
+buildscript {
+	ext {
+		springBootVersion = '1.5.10.RELEASE'
+	}
+	repositories {
+		jcenter()
+		maven  {
+			url "https://plugins.gradle.org/m2/"
+			url 'http://horizon.ifastfinancial.local:8003/nexus/content/groups/public'
+		}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'war'
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-batch')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile project(':spring-batch-domain')
+	providedRuntime "com.oracle:ojdbc6:11.2.0.2.0"
+}
