@@ -16,8 +16,8 @@ public class BoonKiatTestItemWriter implements ItemWriter<BoonKiatTestBean> {
 	
 	@Override
 	public void write(List<? extends BoonKiatTestBean> items) throws Exception {
-		for(BoonKiatTestBean boonKiatTestBean : items) {
-			boonKiatTestDao.add(boonKiatTestBean);
+		for(BoonKiatTestBean item : items) {
+			boonKiatTestDao.add(item);
 		}
 	}
 

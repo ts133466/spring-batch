@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+compileJava.options.encoding = 'UTF-8'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+	jcenter()
+	maven  {
+		url "https://plugins.gradle.org/m2/"
+		url 'http://horizon.ifastfinancial.local:8003/nexus/content/groups/public'
+	}
+}
+
+if (!hasProperty("profile")) {
+	ext.profile = "local"
+}
+
+if (!hasProperty("deployTarget")) {
+	ext.deployTarget = "local"
+}
+
+if(hasProperty("messageBundle") && messageBundle == "true") {
+	ext.messageBundle = true;
+} else {
+	ext.messageBundle = false;
+}
+
+if (!hasProperty("deployToServer")) {
+	ext.deployToServer = "no"
+}
+
+if (!hasProperty("restartServer")) {
+	ext.restartServer = "no"
+}
+
+if (!hasProperty("prepLIVE")) {
+	ext.prepLIVE = "no"
+}
+
+if (!hasProperty("genWsdl")) {
+	ext.genWsdl = false;
+}
+
+if(project.hasProperty("gradleCredentialProperties")){ 
+	apply from : ext.gradleCredentialProperties
+}

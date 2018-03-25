@@ -1,4 +1,4 @@
-include ':spring-batch-persistence', ':spring-batch-domain'
+include ':spring-batch-core', ':spring-batch-domain'
 
-project(':spring-batch-persistence').projectDir = new File('../spring-batch-persistence')
+project(':spring-batch-core').projectDir = new File('../spring-batch-core')
 project(':spring-batch-domain').projectDir = new File('../spring-batch-domain')

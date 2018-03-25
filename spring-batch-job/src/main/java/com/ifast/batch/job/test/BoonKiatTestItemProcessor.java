@@ -11,6 +11,7 @@ public class BoonKiatTestItemProcessor implements ItemProcessor<BoonKiatTestBean
 	@Override
 	public BoonKiatTestBean process(BoonKiatTestBean item) throws Exception {
 		item.setCreateDate(new Date());
+		System.out.println(item.getBidPrice());
 		return item;
 	}
 

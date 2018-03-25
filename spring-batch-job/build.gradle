@@ -22,6 +22,23 @@ apply plugin: 'org.springframework.boot'
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-batch')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile project(':spring-batch-domain')
-	providedRuntime "com.oracle:ojdbc6:11.2.0.2.0"
+	compile 'org.springframework.boot:spring-boot-legacy:1.1.0.RELEASE'
+	compile project(':spring-batch-core')
+	compile "com.oracle:ojdbc6:11.2.0.2.0"
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
+
+war {
+	archiveName 'webspringbatch.war'
+}
+
+task copyPropertiesFile(type:Copy) {
+	from 'build-properties'
+	into 'src/main/resources/'
+	include(profile + '.properties')
+	rename (profile + '.properties', 'application.properties')
+}
+
+processResources.dependsOn copyPropertiesFile
+
+war.dependsOn processResources

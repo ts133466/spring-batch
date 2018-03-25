@@ -1,1 +1,1 @@
-include 'spring-batch-domain', 'spring-batch-job', 'spring-batch-persistence'
+include 'spring-batch-domain', 'spring-batch-job', 'spring-batch-core'
