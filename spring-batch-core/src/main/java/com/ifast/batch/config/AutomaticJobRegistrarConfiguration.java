@@ -30,9 +30,6 @@ public class AutomaticJobRegistrarConfiguration extends AutomaticJobRegistrarCon
 	@Autowired
 	private Environment env;
 
-	/**
-	 * @see de.codecentric.batch.configuration.AutomaticJobRegistrarConfigurationSupport#addApplicationContextFactories(org.springframework.batch.core.configuration.support.AutomaticJobRegistrar)
-	 */
 	@Override
 	protected void addApplicationContextFactories(AutomaticJobRegistrar automaticJobRegistrar) throws Exception {
 		registerJobsFromXml(automaticJobRegistrar);

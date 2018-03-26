@@ -3,8 +3,10 @@ package com.ifast.batch.listener;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
+@Configuration
 public class JobLoggingApplicationListener implements ApplicationListener<ApplicationPreparedEvent>, Ordered {
 
     @Override

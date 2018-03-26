@@ -21,41 +21,42 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.ifast.batch.config.BaseConfiguration;
 import com.ifast.batch.config.CoreConfig;
 import com.ifast.batch.dao.DaoConfig;
+import com.ifast.batch.listener.JobLoggingApplicationListener;
 import com.ifast.batch.monitoring.RunningExecutionTracker;
 import com.ifast.batch.rest.JobMonitoringRestController;
 import com.ifast.batch.rest.JobOperationRestController;
 
 @SpringBootApplication
 @EnableBatchProcessing
-@Import({ DaoConfig.class, CoreConfig.class })
+@Import({ DaoConfig.class, CoreConfig.class, JobLoggingApplicationListener.class })
 @EnableScheduling
 @ComponentScan
 @EntityScan({ "com.ifast.batch.entity" })
 public class Application extends SpringBootServletInitializer {
-	
+
 	@Inject
 	BaseConfiguration baseConfig;
-	
+
 	@Inject
 	RunningExecutionTracker runningExecutionTracker;
-	
+
 	@Inject
 	JobRegistry jobRegistry;
-	
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
 	}
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-	
+
 	@Bean
 	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf) {
-	    return hemf.getSessionFactory();
+		return hemf.getSessionFactory();
 	}
-    
+
 	@Bean
 	public JobMonitoringRestController jobMonitoringController(){
 		return new JobMonitoringRestController(baseConfig.jobOperator(), 
@@ -68,7 +69,7 @@ public class Application extends SpringBootServletInitializer {
 				baseConfig.jobExplorer(), baseConfig.jobRegistry(), baseConfig.jobRepository(), 
 				baseConfig.jobLauncher());
 	}
-	
+
 	@Bean
 	public AutomaticJobRegistrar automaticJobRegistrar() {
 		AutomaticJobRegistrar automaticJobRegistrar = new AutomaticJobRegistrar();
@@ -76,4 +77,5 @@ public class Application extends SpringBootServletInitializer {
 		automaticJobRegistrar.setJobLoader(defaultJobLoader);
 		return automaticJobRegistrar;
 	}
+
 }

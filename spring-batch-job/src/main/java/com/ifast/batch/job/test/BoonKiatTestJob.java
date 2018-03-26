@@ -83,15 +83,6 @@ public class BoonKiatTestJob {
 
 	@Bean
 	public ItemWriter<BoonKiatTestBean> writer() {
-//		FlatFileItemWriter<BoonKiatTestBean> writer = new FlatFileItemWriter<BoonKiatTestBean>();
-//		writer.setResource(new FileSystemResource("/opt/bea/test.csv"));
-//		writer.setLineAggregator(new DelimitedLineAggregator<BoonKiatTestBean>() {{
-//			setFieldExtractor(new BeanWrapperFieldExtractor<BoonKiatTestBean>() {{
-//				setNames(new String[] { "bidPrice", "askPrice" });
-//			}});
-//		}});
-//		writer.setAppendAllowed(true);
-//		return writer;
 		JdbcBatchItemWriter<BoonKiatTestBean> writer = new JdbcBatchItemWriter<>();
 		writer.setDataSource(dataSource);
 		writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<BoonKiatTestBean>());
