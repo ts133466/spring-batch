@@ -216,6 +216,7 @@ public class FlatFilePartitioner implements Partitioner {
 	            if( byteCursor.outstandingData() ) {
 	            	partitionCursor.createPartition( byteCursor.getLinesCount(), result );
 	            }
+	            System.out.println(result);
 		        return result;
         	}
         	finally {

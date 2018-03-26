@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -12,23 +13,20 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
-import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import com.ifast.batch.entity.test.BoonKiatTestBean;
-import com.ifast.batch.partitioner.FlatFilePartitioner;
-import com.ifast.batch.partitioner.MultiThreadedFlatFileItemReader;
 
 @Configuration
 public class BoonKiatTestJob {
@@ -42,12 +40,15 @@ public class BoonKiatTestJob {
 	@Inject
     private SimpleJobLauncher jobLauncher;
 	
+	@Inject
+	private DataSource dataSource;
+	
 	@Bean
 	public Job job(){
 		
 		return jobBuilderFactory.get("job")
 				.incrementer(new RunIdIncrementer())
-				.start(slaveStep())
+				.start(step())
 				.build();
 	}
 	
@@ -64,15 +65,6 @@ public class BoonKiatTestJob {
 //        System.out.println("Job finished with status :" + execution.getStatus());
 //    }
 	
-	@Bean
-	public Step slaveStep(){
-		return stepBuilderFactory.get("slaveStep")
-				.partitioner("step", partitioner())
-				.gridSize(250)
-				.step(step())
-				.build();
-	}
-	
 	@Bean 
 	public Step step() {
 		return stepBuilderFactory.get("step")
@@ -80,6 +72,7 @@ public class BoonKiatTestJob {
 				.reader(reader())
 				.writer(writer())
 				.processor(processor())
+				.taskExecutor(taskExecutor())
 				.build();
 	}
 	
@@ -90,20 +83,25 @@ public class BoonKiatTestJob {
 
 	@Bean
 	public ItemWriter<BoonKiatTestBean> writer() {
-		FlatFileItemWriter<BoonKiatTestBean> writer = new FlatFileItemWriter<BoonKiatTestBean>();
-		writer.setResource(new FileSystemResource("/opt/bea/test.csv"));
-		writer.setLineAggregator(new DelimitedLineAggregator<BoonKiatTestBean>() {{
-			setFieldExtractor(new BeanWrapperFieldExtractor<BoonKiatTestBean>() {{
-				setNames(new String[] { "bidPrice", "askPrice" });
-			}});
-		}});
-		writer.setAppendAllowed(true);
-		return writer;
+//		FlatFileItemWriter<BoonKiatTestBean> writer = new FlatFileItemWriter<BoonKiatTestBean>();
+//		writer.setResource(new FileSystemResource("/opt/bea/test.csv"));
+//		writer.setLineAggregator(new DelimitedLineAggregator<BoonKiatTestBean>() {{
+//			setFieldExtractor(new BeanWrapperFieldExtractor<BoonKiatTestBean>() {{
+//				setNames(new String[] { "bidPrice", "askPrice" });
+//			}});
+//		}});
+//		writer.setAppendAllowed(true);
+//		return writer;
+		JdbcBatchItemWriter<BoonKiatTestBean> writer = new JdbcBatchItemWriter<>();
+		writer.setDataSource(dataSource);
+		writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<BoonKiatTestBean>());
+		writer.setSql("INSERT INTO BOON_KIAT_TEST2 VALUES (:bidPrice, :askPrice, sysdate)");
+		return writer; //new BoonKiatTestItemWriter();
 	}
 
 	@Bean
 	public FlatFileItemReader<BoonKiatTestBean> reader() {
-		MultiThreadedFlatFileItemReader<BoonKiatTestBean> reader = new MultiThreadedFlatFileItemReader<BoonKiatTestBean>();
+		FlatFileItemReader<BoonKiatTestBean> reader = new FlatFileItemReader<BoonKiatTestBean>();
 		reader.setResource(new ClassPathResource("sample-data.csv"));
 		reader.setLineMapper(new DefaultLineMapper<BoonKiatTestBean>() {{
 			setLineTokenizer(new DelimitedLineTokenizer() {{
@@ -116,12 +114,11 @@ public class BoonKiatTestJob {
 		return reader;
 	}
 	
-
 	@Bean
-	public Partitioner partitioner() {
-		FlatFilePartitioner filePartitioner = new FlatFilePartitioner();
-		filePartitioner.setResource(new ClassPathResource("sample-data.csv"));
-		return filePartitioner;
+	public TaskExecutor taskExecutor() {
+		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
+		taskExecutor.setConcurrencyLimit(3);
+		return taskExecutor;
 	}
 	
 	public static void main(String[] args) throws IOException {
