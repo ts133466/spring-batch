@@ -16,11 +16,13 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.integration.config.EnableIntegration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.ifast.batch.config.BaseConfiguration;
 import com.ifast.batch.config.CoreConfig;
 import com.ifast.batch.dao.DaoConfig;
+import com.ifast.batch.job.parallel.SampleReadWriteCopyDeleteJob;
 import com.ifast.batch.listener.JobLoggingApplicationListener;
 import com.ifast.batch.monitoring.RunningExecutionTracker;
 import com.ifast.batch.rest.JobMonitoringRestController;
@@ -28,10 +30,11 @@ import com.ifast.batch.rest.JobOperationRestController;
 
 @SpringBootApplication
 @EnableBatchProcessing
-@Import({ DaoConfig.class, CoreConfig.class, JobLoggingApplicationListener.class })
+@Import({ DaoConfig.class, CoreConfig.class, JobLoggingApplicationListener.class, SampleReadWriteCopyDeleteJob.class })
 @EnableScheduling
 @ComponentScan
 @EntityScan({ "com.ifast.batch.entity" })
+@EnableIntegration
 public class Application extends SpringBootServletInitializer {
 
 	@Inject

@@ -21,5 +21,8 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-batch')
+	compile("org.springframework.boot:spring-boot-starter-integration")
+    compile("org.springframework.integration:spring-integration-file")
+	compile 'org.springframework.batch:spring-batch-integration:3.0.8.RELEASE'
 	compile project(':spring-batch-domain')
 }
