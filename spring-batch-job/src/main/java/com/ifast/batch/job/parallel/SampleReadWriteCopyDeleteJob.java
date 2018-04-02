@@ -225,7 +225,7 @@ public class SampleReadWriteCopyDeleteJob {
 					@Override
 					public void accept(SourcePollingChannelAdapterSpec c) {
 						c
-						.poller(Pollers.fixedDelay(1000));
+						.poller(Pollers.fixedRate(1000));
 					}
 				})
                 .handle(fileMessageToJobRequest())
