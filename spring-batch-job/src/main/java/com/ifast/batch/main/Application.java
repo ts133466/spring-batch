@@ -29,7 +29,7 @@ import com.ifast.batch.rest.JobMonitoringRestController;
 import com.ifast.batch.rest.JobOperationRestController;
 
 @SpringBootApplication
-@EnableBatchProcessing
+@EnableBatchProcessing(modular = true)
 @Import({ DaoConfig.class, CoreConfig.class, JobLoggingApplicationListener.class, SampleReadWriteCopyDeleteJob.class })
 @EnableScheduling
 @ComponentScan

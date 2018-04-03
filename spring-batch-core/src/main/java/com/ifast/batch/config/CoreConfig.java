@@ -25,8 +25,7 @@ import com.ifast.batch.monitoring.RunningExecutionTracker;
 
 @Configuration
 @ComponentScan({ "com.ifast.batch.listener", "com.ifast.batch.logging", 
-				 "com.ifast.batch.monitoring", "com.ifast.batch.scheduler",
-				 "com.ifast.batch.config"})
+				 "com.ifast.batch.monitoring", "com.ifast.batch.scheduler"})
 @Import({ AutomaticJobRegistrarConfiguration.class })
 public class CoreConfig extends DefaultBatchConfigurer implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 	
